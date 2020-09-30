@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk,filedialog
-from ctypes import windll
-import string,os
+from Crypto.Cipher import AES
+import hashlib,string,os,random
 
 window = tk.Tk()
 window.title("BitRecov")
@@ -56,10 +56,27 @@ EntryTargetDiskFormat.grid(row=0,column=1,columnspan=2,ipadx=25,sticky="E")
 tk.Checkbutton(tabFormat,text="Generate Report").grid(row=1,column=0)
 tk.Button(tabFormat,text="Start Format").grid(row=1,column=2,sticky="E")
 
+EncDecType = ['AES','RSA']
+
 def openfileEnc():
     EncFile = filedialog.askopenfile(parent=tabEnc,mode="rb")
     if EncFile:
         EntryTargetDataEnc.insert(0,EncFile.name)
+
+# def LetsEncrypt():
+#     key = ''
+#     iv = ''
+#     for a in range(256):
+#         key += str(random.randint(0,9))
+#     for a in range(16):
+#         iv += str(random.randint(0,9))
+
+#     if EntryEncType.get() == 'AES':
+#         pass
+#     elif EntryEncType.get() == 'RSA':
+#         pass
+#     else:
+#         pass
 
 tabEnc = tk.Frame(Ptab)
 Ptab.add(tabEnc,text="Encryption")
@@ -70,8 +87,8 @@ EntryTargetDataEnc.grid(row=0,column=1,columnspan=2,ipadx=144,pady=5,sticky="E")
 tk.Button(tabEnc,text="...",command=openfileEnc).grid(row=0,column=2,ipadx=5,pady=5,sticky="E")
 LabelEncType = tk.Label(tabEnc,text="Encrytption Type: ")
 LabelEncType.grid(row=1,column=0,sticky="W")
-EntryEncType = tk.Entry(tabEnc)
-EntryEncType.grid(row=1,column=1,columnspan=2,ipadx=144,sticky="E")
+EntryEncType = ttk.Combobox(tabEnc,values=EncDecType)
+EntryEncType.grid(row=1,column=1,columnspan=2,ipadx=135,sticky="E")
 tk.Checkbutton(tabEnc,text="Generate Report").grid(row=2,column=0,pady=5)
 tk.Button(tabEnc,text="Encrypt").grid(row=2,column=2,pady=5,sticky="E")
 
@@ -89,8 +106,8 @@ EntryTargetDataDec.grid(row=0,column=1,columnspan=2,ipadx=144,pady=5,sticky="E")
 tk.Button(tabDec,text="...",command=openfileDec).grid(row=0,column=2,ipadx=5,pady=5,sticky="E")
 LabelDecType = tk.Label(tabDec,text="Decrytption Type: ")
 LabelDecType.grid(row=1,column=0,sticky="W")
-EntryDecType = tk.Entry(tabDec)
-EntryDecType.grid(row=1,column=1,columnspan=2,ipadx=144,sticky="E")
+EntryDecType = ttk.Combobox(tabDec,values=EncDecType)
+EntryDecType.grid(row=1,column=1,columnspan=2,ipadx=135,sticky="E")
 tk.Checkbutton(tabDec,text="Generate Report").grid(row=2,column=0,pady=5)
 tk.Button(tabDec,text="Decrypt").grid(row=2,column=2,pady=5,sticky="E")
 
