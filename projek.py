@@ -2,6 +2,11 @@ import tkinter as tk
 from tkinter import ttk,filedialog
 from Crypto.Cipher import AES
 import hashlib,string,os,random
+import HDDRecov
+import wmi
+import subprocess
+
+w = wmi.WMI()
 
 window = tk.Tk()
 window.title("BitRecov")
@@ -16,14 +21,39 @@ for a in Letter:
     if a not in OccupiedDrivesLetter:
         AvailableDrivesLetter.append(a)
 
+def printselecteddisk():
+    saverecoveredfile = EntrySaveDiskHDDRecov.get()
+    seldisk = EntryTargetDiskHDDRecov.get()
+    for physical_disk in w.Win32_DiskDrive():
+        for partition in physical_disk.associators("Win32_DiskDriveToDiskPartition"):
+            for logical in partition.associators("Win32_LogicalDiskToPartition"):
+                if logical.Caption == seldisk:
+                    hd = partition.Caption[6]
+                    par = int(partition.Caption[20]) + 1
+                    hdpar = '\\\\.\\'
+                    listofdisk = [hdpar + "harddisk" + hd + "partition" + str(par), '--pattern', '*', '--outdir', saverecoveredfile]
+                    # pipe = subprocess.Popen(HDDRecov.main(listofdisk),stdout=subprocess.PIPE)
+                    # text = pipe.communicate()[0]
+                    # subprocess.call("py HDDRecov.py " + hdpar + "harddisk" + hd + "partition" + str(par) + " --pattern \"*\" --outdir \"C:\\Users\\ferdi\\Desktop\\Semester 5\\Computer Forensic\\Projek\\Recovered\"")
+
+def opensavetoHDDRecov():
+    SaveToPath = filedialog.askdirectory()
+    if SaveToPath:
+        EntrySaveDiskHDDRecov.insert(0,SaveToPath)
+
 tabHDD = tk.Frame(Ptab)
 Ptab.add(tabHDD,text="HDD Reovery")
 LabelTargetDiskHDDRecov = tk.Label(tabHDD,text="Target Disk: ")
 LabelTargetDiskHDDRecov.grid(row=0,column=0,pady=5,sticky="W")
 EntryTargetDiskHDDRecov = ttk.Combobox(tabHDD,values=OccupiedDrivesLetter)
 EntryTargetDiskHDDRecov.grid(row=0,column=1,columnspan=2,ipadx=25,sticky="E")
-tk.Checkbutton(tabHDD,text="Generate Report").grid(row=1,column=0,columnspan=2,sticky="W")
-tk.Button(tabHDD,text="Start Recovery").grid(row=1,column=2,sticky="E")
+LabelSaveDiskHDDRecov = tk.Label(tabHDD,text="Save to ")
+LabelSaveDiskHDDRecov.grid(row=1,column=0,pady=5,sticky="W")
+EntrySaveDiskHDDRecov = tk.Entry(tabHDD)
+EntrySaveDiskHDDRecov.grid(row=1,column=1,columnspan=2,ipadx=25,sticky="E")
+tk.Button(tabHDD,text="...",command=opensavetoHDDRecov).grid(row=1,column=2,ipadx=5,pady=5,sticky="E")
+tk.Checkbutton(tabHDD,text="Generate Report").grid(row=2,column=0,columnspan=2,sticky="W")
+tk.Button(tabHDD,text="Start Recovery",command=printselecteddisk).grid(row=2,column=2,sticky="E")
 
 tabPartition = tk.Frame(Ptab)
 Ptab.add(tabPartition,text="Partition Tools")
