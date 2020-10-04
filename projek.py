@@ -34,7 +34,7 @@ def printselecteddisk():
                     listofdisk = [hdpar + "harddisk" + hd + "partition" + str(par), '--pattern', '*', '--outdir', saverecoveredfile]
                     # pipe = subprocess.Popen(HDDRecov.main(listofdisk),stdout=subprocess.PIPE)
                     # text = pipe.communicate()[0]
-                    # subprocess.call("py HDDRecov.py " + hdpar + "harddisk" + hd + "partition" + str(par) + " --pattern \"*\" --outdir \"C:\\Users\\ferdi\\Desktop\\Semester 5\\Computer Forensic\\Projek\\Recovered\"")
+                    subprocess.call("py HDDRecov.py " + hdpar + "harddisk" + hd + "partition" + str(par) + " --pattern \"*\" --outdir \"C:\\Users\\ferdi\\Desktop\\Semester 5\\Computer Forensic\\Projek\\Recovered\"")
 
 def opensavetoHDDRecov():
     SaveToPath = filedialog.askdirectory()
