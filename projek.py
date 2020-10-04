@@ -21,7 +21,7 @@ for a in Letter:
     if a not in OccupiedDrivesLetter:
         AvailableDrivesLetter.append(a)
 
-def printselecteddisk():
+def recoveryselecteddisk():
     saverecoveredfile = EntrySaveDiskHDDRecov.get()
     seldisk = EntryTargetDiskHDDRecov.get()
     for physical_disk in w.Win32_DiskDrive():
@@ -32,9 +32,7 @@ def printselecteddisk():
                     par = int(partition.Caption[20]) + 1
                     hdpar = '\\\\.\\'
                     listofdisk = [hdpar + "harddisk" + hd + "partition" + str(par), '--pattern', '*', '--outdir', saverecoveredfile]
-                    # pipe = subprocess.Popen(HDDRecov.main(listofdisk),stdout=subprocess.PIPE)
-                    # text = pipe.communicate()[0]
-                    subprocess.call("py HDDRecov.py " + hdpar + "harddisk" + hd + "partition" + str(par) + " --pattern \"*\" --outdir \"C:\\Users\\ferdi\\Desktop\\Semester 5\\Computer Forensic\\Projek\\Recovered\"")
+                    HDDRecov.main(listofdisk)
 
 def opensavetoHDDRecov():
     SaveToPath = filedialog.askdirectory()
@@ -53,7 +51,7 @@ EntrySaveDiskHDDRecov = tk.Entry(tabHDD)
 EntrySaveDiskHDDRecov.grid(row=1,column=1,columnspan=2,ipadx=25,sticky="E")
 tk.Button(tabHDD,text="...",command=opensavetoHDDRecov).grid(row=1,column=2,ipadx=5,pady=5,sticky="E")
 tk.Checkbutton(tabHDD,text="Generate Report").grid(row=2,column=0,columnspan=2,sticky="W")
-tk.Button(tabHDD,text="Start Recovery",command=printselecteddisk).grid(row=2,column=2,sticky="E")
+tk.Button(tabHDD,text="Start Recovery",command=recoveryselecteddisk).grid(row=2,column=2,sticky="E")
 
 tabPartition = tk.Frame(Ptab)
 Ptab.add(tabPartition,text="Partition Tools")
