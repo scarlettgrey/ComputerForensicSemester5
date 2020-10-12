@@ -6,6 +6,7 @@ import fnmatch
 import os
 import sys
 import codecs
+import multiprocessing as mp
 
 def doseek(f, n):
     if sys.platform == 'win32':
@@ -434,29 +435,17 @@ EncDecType = ['AES','RSA']
 def openfileEnc():
     EncFile = filedialog.askopenfile(parent=tabEnc,mode="rb")
     if EncFile:
-        EntryTargetDataEnc.insert(0,tk.END)
+        EntryTargetDataEnc.delete(0,tk.END)
         EntryTargetDataEnc.insert(0,EncFile.name)
 
 def openfolderenc():
     EncFolder = filedialog.askdirectory()
     if EncFolder:
-        EntrySaveEncFile.insert(0,tk.END)
+        EntrySaveEncFile.delete(0,tk.END)
         EntrySaveEncFile.insert(0,EncFolder)
 
-# def LetsEncrypt():
-#     key = ''
-#     iv = ''
-#     for a in range(256):
-#         key += str(random.randint(0,9))
-#     for a in range(16):
-#         iv += str(random.randint(0,9))
-
-#     if EntryEncType.get() == 'AES':
-#         pass
-#     elif EntryEncType.get() == 'RSA':
-#         pass
-#     else:
-#         pass
+def AESEncrypt():
+    pass
 
 tabEnc = tk.Frame(Ptab)
 Ptab.add(tabEnc,text="Encryption")
@@ -474,8 +463,8 @@ LabelSaveEncFile.grid(row=2,column=0,pady=5,sticky="W",padx=5)
 EntrySaveEncFile = tk.Entry(tabEnc)
 EntrySaveEncFile.grid(row=2,column=1,columnspan=2,ipadx=144,pady=5,sticky="E",padx=5)
 tk.Button(tabEnc,text="...",command=openfolderenc).grid(row=2,column=2,ipadx=5,pady=5,sticky="E",padx=5)
-tk.Checkbutton(tabEnc,text="Generate Report").grid(row=3,column=0,pady=5,padx=5)
-tk.Button(tabEnc,text="Encrypt").grid(row=3,column=2,pady=5,sticky="E",padx=5)
+tk.Checkbutton(tabEnc,text="Generate Report").grid(row=4,column=0,pady=5,padx=5)
+tk.Button(tabEnc,text="Encrypt",command=AESEncrypt).grid(row=4,column=2,pady=5,sticky="E",padx=5)
 
 def openfileDec():
     DecFile = filedialog.askopenfile(parent=tabDec,mode="rb")
@@ -486,7 +475,7 @@ def openfileDec():
 def openfolderdec():
     DecFolder = filedialog.askdirectory()
     if DecFolder:
-        EntrySaveDecFile.insert(0,tk.END)
+        EntrySaveDecFile.delete(0,tk.END)
         EntrySaveDecFile.insert(0,DecFolder)
 
 
@@ -506,9 +495,11 @@ LabelSaveDecFile.grid(row=2,column=0,pady=5,sticky="W",padx=5)
 EntrySaveDecFile = tk.Entry(tabDec)
 EntrySaveDecFile.grid(row=2,column=1,columnspan=2,ipadx=144,pady=5,sticky="E",padx=5)
 tk.Button(tabDec,text="...",command=openfolderdec).grid(row=2,column=2,ipadx=5,pady=5,sticky="E",padx=5)
-tk.Checkbutton(tabDec,text="Generate Report").grid(row=3,column=0,pady=5,padx=5)
-tk.Button(tabDec,text="Decrypt").grid(row=3,column=2,pady=5,sticky="E",padx=5)
+tk.Checkbutton(tabDec,text="Generate Report").grid(row=4,column=0,pady=5,padx=5)
+tk.Button(tabDec,text="Decrypt").grid(row=4,column=2,pady=5,sticky="E",padx=5)
 
 Ptab.pack(expand=1,fill="both")
 
-window.mainloop() 
+while 1:
+    window.update_idletasks()
+    window.update()
