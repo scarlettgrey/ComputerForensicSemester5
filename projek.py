@@ -309,7 +309,6 @@ def HDDRecovFunc(argv):
 
 import tkinter as tk
 from tkinter import ttk,filedialog
-from Crypto.Cipher import AES
 import hashlib,string,random
 import wmi
 
@@ -348,7 +347,7 @@ def opensavetoHDDRecov():
         EntrySaveDiskHDDRecov.insert(0,SaveToPath)
 
 tabHDD = tk.Frame(Ptab)
-Ptab.add(tabHDD,text="HDD Reovery")
+Ptab.add(tabHDD,text="NTFS Reovery")
 LabelTargetDiskHDDRecov = tk.Label(tabHDD,text="Target Disk: ")
 LabelTargetDiskHDDRecov.grid(row=0,column=0,pady=5,sticky="W",padx=5)
 EntryTargetDiskHDDRecov = ttk.Combobox(tabHDD,values=OccupiedDrivesLetter)
@@ -363,140 +362,6 @@ TextReportingHDDRecov.grid(row=2,column=0,columnspan=3,ipadx=80,padx=5)
 TextReportingHDDRecov.configure(state="disabled")
 tk.Checkbutton(tabHDD,text="Generate Report").grid(row=3,column=0,columnspan=2,sticky="W",padx=5)
 tk.Button(tabHDD,text="Start Recovery",command=recoveryselecteddisk).grid(row=3,column=2,sticky="E",padx=5)
-
-tabPartition = tk.Frame(Ptab)
-Ptab.add(tabPartition,text="Partition Tools")
-EntryPartition = tk.Entry(tabPartition)
-EntryPartition.grid(row=0,ipadx=200,columnspan=4,pady=5,sticky="W",padx=5)
-tk.Button(tabPartition,text="Dump Partition").grid(row=1,column=0,ipadx=14,sticky="W",padx=5)
-LabelRenamePartition = tk.Label(tabPartition,text="Rename")
-LabelRenamePartition.grid(row=1,column=1,padx=5)
-EntryRenamePartition = tk.Entry(tabPartition)
-EntryRenamePartition.grid(row=1,column=2,columnspan=2,ipadx=78,sticky="W",padx=5)
-tk.Radiobutton(tabPartition,text="Primary Partition",value="Primary").grid(row=3,column=0,sticky="W",padx=5)
-tk.Radiobutton(tabPartition,text="Extended Partition",value="Extended").grid(row=3,column=1,sticky="W",padx=5)
-LabelSizePartition = tk.Label(tabPartition,text="Size(in MB): ")
-LabelSizePartition.grid(row=4,column=0,sticky="W",padx=5,pady=5)
-EntrySizePartition = tk.Entry(tabPartition)
-EntrySizePartition.grid(row=4,column=0,columnspan=2,ipadx=25,sticky="E",padx=5,pady=5)
-LabelPartitionLetter = tk.Label(tabPartition,text="Partition Letter: ")
-LabelPartitionLetter.grid(row=4,column=2,sticky="W",padx=5,pady=5)
-EntryPartitionLetter = ttk.Combobox(tabPartition,values=AvailableDrivesLetter)
-EntryPartitionLetter.grid(row=4,column=2,columnspan=2,ipadx=25,sticky="E",padx=5,pady=5)
-tk.Checkbutton(tabPartition,text="Generate Report").grid(row=5,column=0,padx=5)
-tk.Button(tabPartition,text="Execute").grid(row=5,column=3,sticky="E",padx=5)
-
-def FormattingDisk():
-    TextReportingDiskFormat.configure(state="normal")
-    DirectoryPath = EntryTargetDiskFormat.get()
-    DirName = []
-    FilesName = []
-    for Dirpath, Dirname, Filesname in os.walk(DirectoryPath):
-        if Dirname == []:
-            for EveryFiles in Filesname:
-                FilesName.append(Dirpath + "\\" + EveryFiles)
-        else:
-            for EveryDir in Dirname:
-                DirName.insert(0,Dirpath + "\\" + EveryDir)
-    RaiseErrorWhenFormat = 0
-    for EverySingleFile in FilesName:
-        TextReportingDiskFormat.insert(tk.END,"Deleting " + EverySingleFile + "\n")
-        os.remove(EverySingleFile)
-    for EverySingleDir in DirName:
-        if EverySingleDir != DirectoryPath + '\\System Volume Information':
-            try:
-                os.rmdir(EverySingleDir)
-                TextReportingDiskFormat.insert(tk.END,"Deleting " + EverySingleDir + "\n")
-            except:
-                RaiseErrorWhenFormat = 1
-                TextReportingDiskFormat.insert(tk.END,EverySingleDir + " is not empty dir, skipping it\n")
-                continue
-    if RaiseErrorWhenFormat == 1:
-        TextReportingDiskFormat.insert(tk.END,"If [Directory/Folder] is not empty dir happen, trying to use format once again\n")
-
-tabFormat = tk.Frame(Ptab)
-Ptab.add(tabFormat,text="Format")
-LabelTargetDiskFormat = tk.Label(tabFormat,text="Target Disk/Partition: ")
-LabelTargetDiskFormat.grid(row=0,column=0,pady=5,padx=5,sticky="W")
-EntryTargetDiskFormat = ttk.Combobox(tabFormat,values=OccupiedDrivesLetter)
-EntryTargetDiskFormat.grid(row=0,column=1,columnspan=2,ipadx=150,sticky="E",padx=5)
-TextReportingDiskFormat = tk.Text(tabFormat,height=10,width=50)
-TextReportingDiskFormat.grid(row=1,column=0,columnspan=3,ipadx=80,padx=5)
-TextReportingDiskFormat.configure(state="disabled")
-tk.Checkbutton(tabFormat,text="Generate Report").grid(row=2,column=0,padx=5)
-tk.Button(tabFormat,text="Start Format",command=FormattingDisk).grid(row=2,column=2,sticky="E",padx=5)
-LabelWarningFormat = tk.Label(tabFormat,text="THIS\'LL DELETE ALL FILES AND FOLDER WITHOUT EXCEPTION")
-LabelWarningFormat.grid(row=3,column=0,columnspan=3,padx=5)
-LabelWarningFormat1 = tk.Label(tabFormat,text=" DON\'T USE IT ON DISK CONTAIN OPERATING SYSTEM!")
-LabelWarningFormat1.grid(row=4,column=0,columnspan=3,padx=5)
-
-EncDecType = ['AES','RSA']
-
-def openfileEnc():
-    EncFile = filedialog.askopenfile(parent=tabEnc,mode="rb")
-    if EncFile:
-        EntryTargetDataEnc.delete(0,tk.END)
-        EntryTargetDataEnc.insert(0,EncFile.name)
-
-def openfolderenc():
-    EncFolder = filedialog.askdirectory()
-    if EncFolder:
-        EntrySaveEncFile.delete(0,tk.END)
-        EntrySaveEncFile.insert(0,EncFolder)
-
-def AESEncrypt():
-    pass
-
-tabEnc = tk.Frame(Ptab)
-Ptab.add(tabEnc,text="Encryption")
-LabelTargetDataEnc = tk.Label(tabEnc,text="Target Data: ")
-LabelTargetDataEnc.grid(row=0,column=0,pady=5,sticky="W",padx=5)
-EntryTargetDataEnc = tk.Entry(tabEnc)
-EntryTargetDataEnc.grid(row=0,column=1,columnspan=2,ipadx=144,pady=5,sticky="E",padx=5)
-tk.Button(tabEnc,text="...",command=openfileEnc).grid(row=0,column=2,ipadx=5,pady=5,sticky="E",padx=5)
-LabelEncType = tk.Label(tabEnc,text="Encrytption Type: ")
-LabelEncType.grid(row=1,column=0,sticky="W",padx=5)
-EntryEncType = ttk.Combobox(tabEnc,values=EncDecType)
-EntryEncType.grid(row=1,column=1,columnspan=2,ipadx=135,sticky="E",padx=5)
-LabelSaveEncFile = tk.Label(tabEnc,text="Save to ")
-LabelSaveEncFile.grid(row=2,column=0,pady=5,sticky="W",padx=5)
-EntrySaveEncFile = tk.Entry(tabEnc)
-EntrySaveEncFile.grid(row=2,column=1,columnspan=2,ipadx=144,pady=5,sticky="E",padx=5)
-tk.Button(tabEnc,text="...",command=openfolderenc).grid(row=2,column=2,ipadx=5,pady=5,sticky="E",padx=5)
-tk.Checkbutton(tabEnc,text="Generate Report").grid(row=4,column=0,pady=5,padx=5)
-tk.Button(tabEnc,text="Encrypt",command=AESEncrypt).grid(row=4,column=2,pady=5,sticky="E",padx=5)
-
-def openfileDec():
-    DecFile = filedialog.askopenfile(parent=tabDec,mode="rb")
-    if DecFile:
-        EntryTargetDataDec.delete(0,tk.END)
-        EntryTargetDataDec.insert(0,DecFile.name)
-
-def openfolderdec():
-    DecFolder = filedialog.askdirectory()
-    if DecFolder:
-        EntrySaveDecFile.delete(0,tk.END)
-        EntrySaveDecFile.insert(0,DecFolder)
-
-
-tabDec = tk.Frame(Ptab)
-Ptab.add(tabDec,text="Decryption")
-LabelTargetDataDec = tk.Label(tabDec,text="Target Data: ")
-LabelTargetDataDec.grid(row=0,column=0,pady=5,sticky="W",padx=5)
-EntryTargetDataDec = tk.Entry(tabDec)
-EntryTargetDataDec.grid(row=0,column=1,columnspan=2,ipadx=144,pady=5,sticky="E",padx=5)
-tk.Button(tabDec,text="...",command=openfileDec).grid(row=0,column=2,ipadx=5,pady=5,sticky="E",padx=5)
-LabelDecType = tk.Label(tabDec,text="Decrytption Type: ")
-LabelDecType.grid(row=1,column=0,sticky="W",padx=5)
-EntryDecType = ttk.Combobox(tabDec,values=EncDecType)
-EntryDecType.grid(row=1,column=1,columnspan=2,ipadx=135,sticky="E",padx=5)
-LabelSaveDecFile = tk.Label(tabDec,text="Save to ")
-LabelSaveDecFile.grid(row=2,column=0,pady=5,sticky="W",padx=5)
-EntrySaveDecFile = tk.Entry(tabDec)
-EntrySaveDecFile.grid(row=2,column=1,columnspan=2,ipadx=144,pady=5,sticky="E",padx=5)
-tk.Button(tabDec,text="...",command=openfolderdec).grid(row=2,column=2,ipadx=5,pady=5,sticky="E",padx=5)
-tk.Checkbutton(tabDec,text="Generate Report").grid(row=4,column=0,pady=5,padx=5)
-tk.Button(tabDec,text="Decrypt").grid(row=4,column=2,pady=5,sticky="E",padx=5)
 
 Ptab.pack(expand=1,fill="both")
 
