@@ -1,3 +1,4 @@
+  
 from __future__ import unicode_literals, print_function
 import struct
 import collections
@@ -311,6 +312,7 @@ import tkinter as tk
 from tkinter import ttk,filedialog
 import hashlib,string,random
 import wmi
+from datetime import datetime
 
 w = wmi.WMI()
 
@@ -327,6 +329,8 @@ for a in Letter:
     if a not in OccupiedDrivesLetter:
         AvailableDrivesLetter.append(a)
 
+GenerateReport = tk.IntVar()
+
 def recoveryselecteddisk():
     saverecoveredfile = EntrySaveDiskHDDRecov.get()
     seldisk = EntryTargetDiskHDDRecov.get()
@@ -337,8 +341,18 @@ def recoveryselecteddisk():
                     hd = partition.Caption[6]
                     par = int(partition.Caption[20]) + 1
                     hdpar = '\\\\.\\'
-                    listofdisk = [hdpar + "harddisk" + hd + "partition" + str(par), '--pattern', '*', '--outdir', saverecoveredfile]
+                    listofdisk = [hdpar + "harddisk" + hd + "partition" + str(par), '--pattern', '*.*', '--outdir', saverecoveredfile]
                     HDDRecovFunc(listofdisk)
+    if(GenerateReport.get() == 1):
+        date = str(datetime.now())[:19]
+        cleandate = date.replace('-','').replace(':','').replace(' ','')
+        logfilename = '/report' + cleandate + '.log'
+        f = open(saverecoveredfile + logfilename,'w')
+        f.write(date + '\n')
+        f.write(TextReportingHDDRecov.get(1.0,tk.END))
+        TextReportingHDDRecov.configure(state="normal")
+        TextReportingHDDRecov.insert(tk.END,"Report Generated at " + saverecoveredfile + logfilename + "\n")
+        TextReportingHDDRecov.configure(state="disabled")
 
 def opensavetoHDDRecov():
     SaveToPath = filedialog.askdirectory()
@@ -360,7 +374,7 @@ tk.Button(tabHDD,text="...",command=opensavetoHDDRecov).grid(row=1,column=2,ipad
 TextReportingHDDRecov = tk.Text(tabHDD,height=10,width=50)
 TextReportingHDDRecov.grid(row=2,column=0,columnspan=3,ipadx=80,padx=5)
 TextReportingHDDRecov.configure(state="disabled")
-tk.Checkbutton(tabHDD,text="Generate Report").grid(row=3,column=0,columnspan=2,sticky="W",padx=5)
+tk.Checkbutton(tabHDD,text="Generate Report",variable=GenerateReport).grid(row=3,column=0,columnspan=2,sticky="W",padx=5)
 tk.Button(tabHDD,text="Start Recovery",command=recoveryselecteddisk).grid(row=3,column=2,sticky="E",padx=5)
 
 Ptab.pack(expand=1,fill="both")
